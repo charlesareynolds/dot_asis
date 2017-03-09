@@ -27,22 +27,23 @@
 
 --  This package defines the data structures and the utility programs needed
 --  to implement an ASIS Metrics tool in the framework of the ASIS tutorial
---  provided by ASIS-for-GNAT (Task 1).
+--  provided by ASIS-for-GNAT (Task 2).
 
 package Metrics_Utilities is
 
    --  Metric counters:
    Total_Statements   : Natural := 0;
    Total_Declarations : Natural := 0;
-   --  You will have to add some more metric counters for the metrics defined
-   --  in Task 2
+
+   --  Metric counters added for Task 2:
+   Simple_Statements   : Natural := 0;
+   Compound_Statements : Natural := 0;
+   Defining_Names      : Natural := 0;
 
    procedure Reset_Metric_Counters;
-   --  Sets all the metric counters to zero. This procedure should be revised
-   --  when new metric counters are added for Task 2.
+   --  Sets all the metric counters to zero.
 
    procedure Print_Metric_Counterts;
-   --  Outputs the values of the metric counters. This procedure should be
-   --  revised when new metric counters are added for Task 2.
+   --  Outputs the values of the metric counters.
 
 end Metrics_Utilities;
