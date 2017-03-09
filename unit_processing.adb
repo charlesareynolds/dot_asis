@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                    ASIS APPLICATION TEMPLATE COMPONENTS                  --
+--                           ASIS TUTORIAL COMPONENTS                       --
 --                                                                          --
 --                        U N I T _ P R O C E S S I N G                     --
 --                                                                          --
@@ -20,14 +20,21 @@
 -- Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, --
 -- USA.                                                                     --
 --                                                                          --
--- ASIS Application Templates were developed and are now maintained by Ada  --
--- Core Technologies Inc (http://www.gnat.com).                             --
+-- ASIS Tutorial was developed and are now maintained by Ada Core           --
+-- Technologies Inc (http://www.gnat.com).                                  --
 --                                                                          --
 ------------------------------------------------------------------------------
+
+--  This is the modification of the file with the same name from the ASIS
+--  Application Templates to be used in the solution of the metrics tool
+--  (for Task 1 and Task 2 the same version of this file is used)
 
 with Asis.Elements;
 
 with Element_Processing;
+
+with Metrics_Utilities;
+--  Added for the solution of the metrics tool
 
 package body Unit_Processing is
 
@@ -44,10 +51,13 @@ package body Unit_Processing is
       --  calling Asis.Elements.Context_Clause_Elements
 
       Unit_Decl : Asis.Element := Asis.Elements.Unit_Declaration (The_Unit);
-      --  The top-level ctructural element of the library item or subunit
+      --  The top-level structural element of the library item or subunit
       --  contained in The_Unit.
 
    begin
+
+      Metrics_Utilities.Reset_Metric_Counters;
+      --  Added for the solution of the metrics tool
 
       for J in Cont_Clause_Elements'Range loop
          Element_Processing.Process_Construct (Cont_Clause_Elements (J));
@@ -62,6 +72,9 @@ package body Unit_Processing is
       --  supposes that Element_Processing.Process_Construct should handle
       --  all the exceptions which can be raised when processing the element
       --  hierarchy
+
+      Metrics_Utilities.Print_Metric_Counterts;
+      --  Added for the solution of the metrics tool
 
    end Process_Unit;
 
