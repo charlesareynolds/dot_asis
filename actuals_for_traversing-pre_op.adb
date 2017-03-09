@@ -26,9 +26,12 @@
 ------------------------------------------------------------------------------
 
 --  This is the body of Pre_Op to be used as an example of the style
---  checker solution (Task 1) built on top of the ASIS Application Templates
+--  checker solution (Task 2) built on top of the ASIS Application Templates
 --  provided in ASIS-for-GNAT. This file is supposed to replace the file with
 --  the same name which is a part of the ASIS Application Templates
+--
+--  This Ada unit is obtained as an "extension" of the code which is the
+--  solution for Task 1
 
 with Ada.Wide_Text_IO;
 with Ada.Characters.Handling;
@@ -39,6 +42,7 @@ with Asis.Errors;
 with Asis.Implementation;
 with Asis.Elements;
 with Asis.Declarations;
+with Asis.Expressions;
 
 with Style_Checker_Utilities;
 
@@ -50,6 +54,10 @@ procedure Pre_Op
 is
    Argument_Kind             : Asis.Element_Kinds;
    Argument_Declaration_Kind : Asis.Declaration_Kinds;
+
+   Argument_Association_Kind : Asis.Association_Kinds;
+   --  Added for Task 2
+
 begin
    --  Note, that the code below may be rewritten in more compact way (with
    --  the same functionality). But we prefer to go step-by-step,
@@ -59,7 +67,59 @@ begin
 
    case Argument_Kind is
 
+      when Asis.An_Association =>
+         --  The first rule added by Task 1 is about generic associations,
+         --  so we have to add one more alternative to the external case
+         --  statement - for An_Association Element_Kinds value.
+
+         --  Inside this alternative you first have to define the exact
+         --  association kind:
+
+         Argument_Association_Kind := Asis.Elements.Association_Kind (Element);
+
+         --  and for A_Generic_Association Element:
+
+         case Argument_Association_Kind is
+
+            when Asis.A_Generic_Association =>
+               --  you have to check that they are in named form.
+               --  In ASIS terms this means, that the result of
+               --  Asis.Expressions.Formal_Parameter query applied
+               --  to the association Element is not Nil
+
+               if Asis.Elements.Is_Nil
+                  (Asis.Expressions.Formal_Parameter (Element))
+               then
+                  Style_Checker_Utilities.Report_Style_Violation
+                    (The_Element => Element,
+                     Diagnosis   => "Positional generic association");
+               end if;
+
+            when others =>
+               --  Nothing to do with other association kinds, so
+               null;
+         end case;
+
       when Asis.A_Declaration =>
+
+         --  The second rule added by Task 2 is about declarations in general.
+         --  Actually, it have to be checked only for declarations which can
+         --  define more then one entity (such as object declarations and
+         --  parameter declarations), and this rule is always true for other
+         --  declarations (such as package declarations, type declarations
+         --  etc.) But to simplify the code needed to check this rule, we may
+         --  check it for all declaration kinds. The check itself is very
+         --  simple - we have to get the list of the names defined by a
+         --  given declaration (see the query Asis.Declarations.Names) and
+         --  check how many they are.
+
+         if Asis.Declarations.Names (Element)'Length >= 2 then
+            Style_Checker_Utilities.Report_Style_Violation
+              (The_Element => Element,
+               Diagnosis   => "Declaration with more then one name");
+         end if;
+
+         --  The following check came from Task 1
          --  The rule to check is about a specific kinds of declarations
          --  only - we have to check that each subprogram body has a separate
          --  spec. So we have first to define a more specific declaration
@@ -93,35 +153,6 @@ begin
          --  to do
          null;
    end case;
-
-   ----------------------
-   -- Hints for Task 2 --
-   ----------------------
-
-   --  Task 2 adds two new rules to check.
-   --
-   --  The first rule is about generic associations, so you have to add one
-   --  more alternative to the external case statement - for An_Association
-   --  Element_Kinds value. Inside this alternative you first have to define
-   --  the exact association kind, and for A_Generic_Association Element you
-   --  have to check that they are in named form. In ASIS terms this means,
-   --  that the result of Asis.Expressions.Formal_Parameter query applied
-   --  to the association Element is not nil.
-   --
-   --  The second rule is about declarations in general. Actually, it has to
-   --  be checked only for declarations which can define more then one entity
-   --  (such as object declarations and parameter declarations), and this rule
-   --  is always true for other declarations (such as package declarations,
-   --  type declarations etc.) But to simplify the code needed to check this
-   --  rule, we may check it for all declaration kinds. The check itself is
-   --  very simple - you have to get the list of the names defined by a
-   --  given declaration (see the query Asis.Declarations.Names) and check
-   --  how many they are.
-   --
-   --  These comments are kept in slightly modified form in the solution we
-   --  provide for Task 2 as comments to the corresponding fragments of the
-   --  code
-
 
 exception
 
