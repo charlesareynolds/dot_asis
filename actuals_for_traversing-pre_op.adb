@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                    ASIS APPLICATION TEMPLATE COMPONENTS                  --
+--                       ASIS TUTORIAL COMPONENTS                           --
 --                                                                          --
 --           A C T U A L S _ F O R _ T R A V E R S I N G . P R E _ O P      --
 --                                                                          --
@@ -20,10 +20,15 @@
 -- Software Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, --
 -- USA.                                                                     --
 --                                                                          --
--- ASIS Application Templates were developed and are now maintained by Ada  --
--- Core Technologies Inc (http://www.gnat.com).                             --
+-- ASIS Tutorial was developed and are now maintained by Ada Core           --
+-- Technologies Inc (http://www.gnat.com).                                  --
 --                                                                          --
 ------------------------------------------------------------------------------
+
+--  This is the body of Pre_Op to be used as an example of the metrics tool
+--  solution (Task 1) built on top of the ASIS Application Templates
+--  provided in ASIS-for-GNAT. This file is supposed to replace the file with
+--  the same name which is a part of the ASIS Application Templates
 
 with Ada.Wide_Text_IO;
 with Ada.Characters.Handling;
@@ -32,6 +37,9 @@ with Ada.Exceptions;
 with Asis.Exceptions;
 with Asis.Errors;
 with Asis.Implementation;
+with Asis.Elements;
+
+with Metrics_Utilities;
 
 separate (Actuals_For_Traversing)
 procedure Pre_Op
@@ -39,8 +47,65 @@ procedure Pre_Op
    Control : in out Asis.Traverse_Control;
    State   : in out Traversal_State)
 is
+   Argument_Kind             : Asis.Element_Kinds;
 begin
-   null;
+   --  Note, that the code below may be rewritten in more compact way (with
+   --  the same functionality). But we prefer to go step-by-step,
+   --  demonstrating the important ASIS queries
+
+   Argument_Kind := Asis.Elements.Element_Kind (Element);
+
+   case Argument_Kind is
+
+      when Asis.A_Statement =>
+         --  We have to compute the total number of all the statements, so:
+         Metrics_Utilities.Total_Statements :=
+            Metrics_Utilities.Total_Statements + 1;
+
+      when Asis.A_Declaration =>
+         --  We have to compute the total number of all the declarations, so:
+         Metrics_Utilities.Total_Declarations :=
+            Metrics_Utilities.Total_Declarations + 1;
+
+      when others =>
+         --  Our metrics for Task 1 are about declarations and statements,
+         --  so if we have something else, we have nothing to do.
+         null;
+   end case;
+
+   ----------------------
+   -- Hints for Task 2 --
+   ----------------------
+
+   --  Task 2 adds three new metrics to compute.
+   --
+   --  The first two metrics (computing the simple statements and the compound
+   --  statements) can be implemented by detecting the subordinate statement
+   --  kind in case if the argument being visited is a statement and
+   --  increasing the corresponding metric counter.
+   --
+   --  To compute the last metric (the total number of all the explicitly
+   --  declared names), we have to take into account that some declarations
+   --  may define more then one name. Therefore for each declaration we have
+   --  to get the list of the declared names and to increase the corresponding
+   --  metric counter by the number of the names in this list (see the query
+   --  Asis.Declarations.Names).
+   --
+   --  Another approach could be to count all the Elements of A_Defining_Name
+   --  kind, but in this case we will have to be aware, that each Element of
+   --  A_Defining_Expanded_Name kind contains the subcomponnet of
+   --  A_Defining_Identifier (or A_Defining_Operator_Symbol) kind as its
+   --  selector component, so we should not count A_Defining_Expanded_Name
+   --  Elements, otherwise defining program unit names which have the form
+   --  of expanded names would be counted twice.
+   --
+   --  Any of these two possibilities could be taken. In the solution
+   --  presented in the 'task_2' subdirectory the first approach is used.
+   --
+   --  These comments are kept in slightly modified form in the solution we
+   --  provide for Task 2 as comments to the corresponding fragments of the
+   --  code
+
 exception
 
    when Ex : Asis.Exceptions.ASIS_Inappropriate_Context          |
