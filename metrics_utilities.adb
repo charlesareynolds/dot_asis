@@ -36,12 +36,28 @@ package body Metrics_Utilities is
    procedure Print_Metric_Counterts is
       package Natural_IO is new Ada.Wide_Text_IO.Integer_IO (Natural);
    begin
-      Ada.Wide_Text_IO.Put ("Total statements  :");
+      Ada.Wide_Text_IO.Put ("Total statements    :");
       Natural_IO.Put       (Total_Statements);
       Ada.Wide_Text_IO.New_Line;
 
-      Ada.Wide_Text_IO.Put ("Total declarations:");
+      --   Added for Task 2:
+      Ada.Wide_Text_IO.Put ("Simple statements   :");
+      Natural_IO.Put       (Simple_Statements);
+      Ada.Wide_Text_IO.New_Line;
+
+      --   Added for Task 2:
+      Ada.Wide_Text_IO.Put ("Compound statements :");
+      Natural_IO.Put       (Compound_Statements);
+      Ada.Wide_Text_IO.New_Line;
+
+
+      Ada.Wide_Text_IO.Put ("Total declarations  :");
       Natural_IO.Put       (Total_Declarations);
+      Ada.Wide_Text_IO.New_Line;
+
+      --   Added for Task 2:
+      Ada.Wide_Text_IO.Put ("Defining names      :");
+      Natural_IO.Put       (Defining_Names);
       Ada.Wide_Text_IO.New_Line;
    end Print_Metric_Counterts;
 
@@ -51,8 +67,14 @@ package body Metrics_Utilities is
 
    procedure Reset_Metric_Counters is
    begin
-      Total_Statements   := 0;
-      Total_Declarations := 0;
+      Total_Statements    := 0;
+      Total_Declarations  := 0;
+
+      --   Added for Task 2:
+      Simple_Statements   := 0;
+      Compound_Statements := 0;
+      Defining_Names      := 0;
+
    end Reset_Metric_Counters;
 
 end Metrics_Utilities;
