@@ -18,14 +18,12 @@ source ${base_dir}/../utility_functions.sh
 obj_dir=${base_dir}/obj
 
 tool_name=run_asis_tool_2
-target_dir=${base_dir}/../test_units
+# All 98 .adb and .ads files gnatchopped from the 79 acats "a" files in the parent dir:
+#target_units=`ls /g/g17/charles/code/research/ada/acats_41/a/src/*.ad[sb]`
+# All 74 .adb, .ads, and .au files gnatchopped from the 38 acats "a" files in the parent dir:
+target_units=`ls /g/g17/charles/code/research/ada/acats_41/c2/src/*.a*`
 #target_units="minimal.adb"
-#target_units="unit_2.ads"
-target_units="unit_2.adb"
-#target_units="variable_declaration.ads"
-#target_units="if_statement.adb"
-#target_units="ordinary_type_declaration.ads"
-#target_units=`(cd ${target_dir}; ls *.ad[bs])`
+#target_units="unit_2.adb"
 
 check_for_gnat () {
   log_separator_1
@@ -53,7 +51,7 @@ build_asis_tool () {
 process_units () {
   status=0  
   log_separator_1
-  log "Processing specified files in ${target_dir} with ${tool_name}"
+  log "Processing specified files with ${tool_name}"
   for target_unit in ${target_units}
   do
     log "Processing ${target_unit}"
@@ -61,7 +59,7 @@ process_units () {
     # -g - GNAT home directory (required)
     # -o - Output directory (optional)
     log_and_run ${obj_dir}/${tool_name} \
-       -f ${target_dir}/${target_unit} \
+       -f ${target_unit} \
        -g /usr/workspace/wsb/charles/bin/adacore/gnat-gpl-2017-x86_64-linux \
        -o `pwd` \
        "$@" || status=1

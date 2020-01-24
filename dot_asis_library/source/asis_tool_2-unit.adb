@@ -621,7 +621,11 @@ package body Asis_Tool_2.Unit is
       end case;
 
       Finish_Output;
-      Process_Element_Trees (This, Unit);
+      Process_Element_Trees
+        (This               => This,
+         Asis_Unit          => Unit,
+         Do_Context_Clauses => False,
+         Include_Pragmas    => True);
       Log ("DONE Processing " & To_String (Unit_Full_Name) & " " &
              To_String (To_Wide_String (Unit_Class)));
    end Process_Application_Unit;
